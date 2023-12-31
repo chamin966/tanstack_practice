@@ -1,6 +1,9 @@
 import useSupabase from "./useCreateSupabase";
+import {useSuspenseQuery} from '@tanstack/react-query'
 
-async function useGetSupabase(){
+const QUERY_BOOKS_KEY = 'BOOKS';
+
+const fetcher = async () => {
     const supabase = useSupabase();
     const {data: table, error} = await supabase.from('/table').select('*');
 
@@ -12,4 +15,11 @@ async function useGetSupabase(){
     return table;
 }
 
-export default useGetSupabase;
+const useGetSupabaseQuery = () => {
+    return useSuspenseQuery({
+        queryKey: [QUERY_BOOKS_KEY],
+        queryFn: fetcher,
+    })
+}
+
+export default useGetSupabaseQuery;
