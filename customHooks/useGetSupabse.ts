@@ -8,6 +8,7 @@ async function useGetSupabase(){
         console.log('error 발생 :>> ', error);
         return null;
     }
+    console.log('data :>> ', table);
     return table;
 }
 
