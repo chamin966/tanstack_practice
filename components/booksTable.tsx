@@ -1,21 +1,13 @@
-
-import useGetSupabaseQuery from "@/customHooks/useGetSupabseQuery";
-import useGetSupabase from "@/customHooks/useGetSupabseQuery";
+import useGetInfiniteSupabaseQuery, { IBook } from "@/customHooks/useGetInfiniteBooksQuery";
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 
-interface IBook  {
-  serialNumber: string,
-  title: string,
-  author: string,
-  createdAt: string,
-  publisher: string,
-}
 
 function BooksTable(){
-  const {data: books} = useGetSupabaseQuery();
+  const [books, setBooks] = useState<IBook[]>([]);
+  const {data, hasNextPage, fetchNextPage} = useGetInfiniteSupabaseQuery();
+  const columnHelper = createColumnHelper();
 
-  const columnHelper = createColumnHelper<IBook>();
 
   const columns = [
     columnHelper.accessor('serialNumber',{
@@ -39,42 +31,58 @@ function BooksTable(){
     cell: info => info.getValue(),
     })
   ]
-
+  
   const table = useReactTable({
     data: books,
     columns,
     getCoreRowModel: getCoreRowModel()
   })
 
+  const handleNewGenerate = () => {
+    console.log('새로 불러옴');
+    console.log('hasNextPage :>> ', hasNextPage);
+    fetchNextPage();
+  }
+
+  useEffect(() => {
+    if(data){
+        const newPage = data.pages.flat();
+        setBooks(newPage);
+      }
+  }, [data])
+
   return(
-    <div className="bg-red-400 h-[400px] overflow-auto p-3">
-      <table>
-        <thead>
-          {table.getHeaderGroups().map(headerGroup => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map(header => (
-                <th key={header.id}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(header.column.columnDef.header, header.getContext())
-                    }
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody>
-          {table.getRowModel().rows.map(row => (
-            <tr key={row.id}>
-              {row.getVisibleCells().map(cell => (
-                <td className="text-center h-[60px] border border-black" key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="p-3">
+      <div className="h-[400px] overflow-auto ">
+        <table className=" bg-red-400">
+          <thead>
+            {table.getHeaderGroups().map(headerGroup => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map(header => (
+                  <th key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(header.column.columnDef.header, header.getContext())
+                      }
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody>
+            {table.getRowModel().rows.map(row => (
+              <tr key={row.id}>
+                {row.getVisibleCells().map(cell => (
+                  <td className="text-center h-[60px] border border-black" key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <button onClick={handleNewGenerate}>새로 불러오기</button>
     </div>
   )
 }
