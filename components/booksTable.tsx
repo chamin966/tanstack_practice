@@ -1,12 +1,13 @@
+import Loading from "@/app/table/loading";
 import useGetInfiniteSupabaseQuery, { IBook } from "@/customHooks/useGetInfiniteBooksQuery";
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 
 
 function BooksTable(){
   const [books, setBooks] = useState<IBook[]>([]);
-  const {data, hasNextPage, fetchNextPage} = useGetInfiniteSupabaseQuery();
+  const {data, hasNextPage, fetchNextPage, isLoading} = useGetInfiniteSupabaseQuery();
   const { ref, inView } = useInView();
   
   const columnHelper = createColumnHelper();
@@ -45,12 +46,6 @@ function BooksTable(){
     getCoreRowModel: getCoreRowModel()
   })
 
-  const handleNewGenerate = () => {
-    console.log('새로 불러옴');
-    console.log('hasNextPage :>> ', hasNextPage);
-    fetchNextPage();
-  }
-
   useEffect(() => {
     if(data){
         const newPage = data.pages.flat();
@@ -83,21 +78,25 @@ function BooksTable(){
               </tr>
             ))}
           </thead>
-          <tbody className="bg-slate-400 pt-10 ">
-            {table.getRowModel().rows.map(row => (
-              <tr key={row.id}>
-                {row.getVisibleCells().map(cell => (
-                  <td className="text-center h-20 border border-black" key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
-            ))}
+          <tbody className="bg-slate-400">
+            {
+              isLoading && <tr className="bg-white w-full h-full"><td>로딩중...</td></tr>
+            }
+            {
+              table.getRowModel().rows.map(row => (
+                <tr key={row.id}>
+                  {row.getVisibleCells().map(cell => (
+                    <td className="text-center h-20 border border-black" key={cell.id}>
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </td>
+                  ))}
+                </tr>
+              ))
+            }
             {hasNextPage && <tr ref={ref}/>}
-          </tbody>
+          </tbody> 
         </table>
       </div>
-      <button onClick={handleNewGenerate}>새로 불러오기</button>
     </div>
   )
 }

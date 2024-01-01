@@ -11,7 +11,9 @@ function Table() {
   return (
     <QueryClientProvider client={queryClient}>
       <section>
+        <Suspense fallback={<Loading/>}>
           <BooksTable/>
+        </Suspense>
       </section>
     </QueryClientProvider>
   )
