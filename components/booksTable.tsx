@@ -13,22 +13,28 @@ function BooksTable(){
   const columns = [
     columnHelper.accessor('serialNumber',{
     header: () => <div>SN</div>,
+    maxSize: 10,
     cell: info => info.getValue(),
     }),
     columnHelper.accessor('title',{
     header: () => <div>제목</div>,
+    maxSize: 300,
+    minSize: 300,
     cell: info => info.getValue(),
     }),
     columnHelper.accessor('author',{
     header: () => <div>작가</div>,
+    maxSize: 100,
     cell: info => info.getValue(),
     }),
     columnHelper.accessor('publisher',{
     header: () => <div>출판사</div>,
+    maxSize: 70,
     cell: info => info.getValue(),
     }),
     columnHelper.accessor('createdAt',{
     header: () => <div>출판일</div>,
+    maxSize: 70,
     cell: info => info.getValue(),
     })
   ]
@@ -61,13 +67,13 @@ function BooksTable(){
 
   return(
     <div className="p-3">
-      <div className="h-[400px] overflow-auto">
-        <table className=" bg-red-400">
-          <thead>
+      <div className="h-[400px] w-full overflow-auto border border-black">
+        <table className="w-full border-separate  border-spacing-0">
+          <thead className="sticky top-0 h-10 ">
             {table.getHeaderGroups().map(headerGroup => (
-              <tr key={headerGroup.id}>
+              <tr key={headerGroup.id} >
                 {headerGroup.headers.map(header => (
-                  <th key={header.id}>
+                  <th key={header.id} style={{width: header.getSize()}} className="border border-black bg-white p-3">
                     {header.isPlaceholder
                       ? null
                       : flexRender(header.column.columnDef.header, header.getContext())
@@ -77,11 +83,11 @@ function BooksTable(){
               </tr>
             ))}
           </thead>
-          <tbody>
+          <tbody className="bg-slate-400 pt-10 ">
             {table.getRowModel().rows.map(row => (
               <tr key={row.id}>
                 {row.getVisibleCells().map(cell => (
-                  <td className="text-center h-[60px] border border-black" key={cell.id}>
+                  <td className="text-center h-20 border border-black" key={cell.id}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}
