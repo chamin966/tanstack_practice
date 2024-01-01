@@ -1,14 +1,15 @@
 import useGetInfiniteSupabaseQuery, { IBook } from "@/customHooks/useGetInfiniteBooksQuery";
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
+import { useInView } from "react-intersection-observer";
 
 
 function BooksTable(){
   const [books, setBooks] = useState<IBook[]>([]);
   const {data, hasNextPage, fetchNextPage} = useGetInfiniteSupabaseQuery();
+  const { ref, inView } = useInView();
+  
   const columnHelper = createColumnHelper();
-
-
   const columns = [
     columnHelper.accessor('serialNumber',{
     header: () => <div>SN</div>,
@@ -51,9 +52,16 @@ function BooksTable(){
       }
   }, [data])
 
+  useEffect(()=> {
+    if(inView && hasNextPage){
+      fetchNextPage();
+      console.log('다음 페이지 로드됨');
+    }
+  }, [inView]);
+
   return(
     <div className="p-3">
-      <div className="h-[400px] overflow-auto ">
+      <div className="h-[400px] overflow-auto">
         <table className=" bg-red-400">
           <thead>
             {table.getHeaderGroups().map(headerGroup => (
@@ -79,6 +87,7 @@ function BooksTable(){
                 ))}
               </tr>
             ))}
+            {hasNextPage && <tr ref={ref}/>}
           </tbody>
         </table>
       </div>

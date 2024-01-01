@@ -11,9 +11,10 @@ export interface IBook {
 
 const QUERY_BOOKS_INFINITE_KEY = 'INFINITY_BOOKS';
 
+    const supabase = useSupabase();
+
 const fetcher = async (start: any, fetchSize: number) => {
     console.log('start부터 시작:>> ', start);
-    const supabase = useSupabase();
     const {data, error} = await supabase.from('/table').select('*').range(start, start + fetchSize);
 
     if(error){
