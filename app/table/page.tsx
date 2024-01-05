@@ -12,15 +12,12 @@ import BooksTable from "@/components/booksTable";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 function Table() {
-  const queryClient = new QueryClient();
   return (
-    <QueryClientProvider client={queryClient}>
-      <section>
-        <Suspense fallback={<Loading />}>
-          <BooksTable />
-        </Suspense>
-      </section>
-    </QueryClientProvider>
+    <section>
+      <Suspense fallback={<Loading />}>
+        <BooksTable />
+      </Suspense>
+    </section>
   );
 }
 
