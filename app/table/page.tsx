@@ -1,6 +1,11 @@
-'use client'
+"use client";
 import useGetSupabase from "@/customHooks/useGetSupabseQuery";
-import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import {
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
 import { Suspense, useEffect, useLayoutEffect, useState } from "react";
 import Loading from "./loading";
 import BooksTable from "@/components/booksTable";
@@ -11,12 +16,12 @@ function Table() {
   return (
     <QueryClientProvider client={queryClient}>
       <section>
-        <Suspense fallback={<Loading/>}>
-          <BooksTable/>
+        <Suspense fallback={<Loading />}>
+          <BooksTable />
         </Suspense>
       </section>
     </QueryClientProvider>
-  )
+  );
 }
 
 export default Table;
